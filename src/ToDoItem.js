@@ -2,12 +2,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
-import { padding } from '@mui/system';
-import '@fontsource/roboto/300.css';
-import '@fontsource/roboto/400.css';
-import '@fontsource/roboto/500.css';
 
-const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 const ToDoItem = (props) => {
 	const {item, onCheck, onChange, index} = props;
 	return(
