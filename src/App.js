@@ -6,17 +6,20 @@ import Stack from '@mui/material/Stack';
 import { Box, Button } from '@mui/material';
 import axios from 'axios';
 
+
 const api = axios.create({baseURL:'https://jsonplaceholder.typicode.com/todos'})
+const TODO_NUM = 200; // the total number of todo in the website
 
 export default function App() {
-  const [toDoList,setToDoList] = React.useState([{id:1, checked:false, content:''},
-                                                 {id:2, checked:false, content:''},
-                                                 {id:3, checked:false, content:''},
-                                                 {id:4, checked:false, content:''},
-                                                 {id:5, checked:false, content:''},
-                                                 {id:6, checked:false, content:''},
+  const [maxID,setMaxID] = React.useState(TODO_NUM);
+  const [toDoList,setToDoList] = React.useState([{id:maxID+1, checked:false, content:''},
+                                                 {id:maxID+2, checked:false, content:''},
+                                                 {id:maxID+3, checked:false, content:''},
+                                                 {id:maxID+4, checked:false, content:''},
+                                                 {id:maxID+5, checked:false, content:''},
+                                                 {id:maxID+6, checked:false, content:''},
   ])
-  const [maxID,setMaxID] = React.useState(toDoList.length);
+  
 
   const handleCheckBoxChange = (event, index) =>{
     setToDoList(toDoList.map((item, i)=>{
@@ -30,7 +33,7 @@ export default function App() {
     }));
   }
 
-  const handleTextFieldBlur = async (event, index) =>{
+  const handleTextFieldBlur = (event, index) =>{
     let item = toDoList[index];
     if ( item.id<= 200){ // since the mock todo list has only 200 items
       api.patch(`./${item.id}`,{id:item.id, completed:item.checked, title:item.content})
@@ -51,14 +54,21 @@ export default function App() {
     for (let i = 0; i < randomInt(3,10);i++){
       idSet.add(randomInt(1,100));
     }
-    let randomToDos = [];
+    let promiseList = [];
     for (const id of idSet){
-      const response = await api.get(`./${id}`).then((response)=>response.data);
+      promiseList.push(api.get(`./${id}`));
       //console.log(response);
-      setMaxID(preMaxID=>Math.max(preMaxID,response.id));
-      randomToDos.push({id:response.id, checked:response.completed,content:response.title});
     }
-    setToDoList(randomToDos);
+    let maxID = 0;
+    Promise.all(promiseList).then(responses=>{
+      setToDoList((responses.map((response)=>{
+        response = response.data;
+        maxID = Math.max(maxID, response.id);
+        //console.log(maxID)
+        return {id:response.id, checked:response.completed, content:response.title};
+      })))
+      setMaxID((preMaxID)=>Math.max(maxID, preMaxID));
+    })
   }
 
   return (
