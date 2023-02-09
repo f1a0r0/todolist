@@ -4,13 +4,13 @@ import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
 
 const ToDoItem = (props) => {
-	const {item, onCheck, onChange, index} = props;
+	const {item, checkBoxOnChange, textFieldOnChange, textFieldOnBlur, index} = props;
 	return(
 		<Box noValidate width='80%' display='flex' alignItems='center' justifyContent='center' color={item.checked?'grey':'black'} >
-			<Checkbox checked={item.checked} onChange={(event)=>onCheck(event,index)}/> 
+			<Checkbox checked={item.checked} onChange={(event)=>checkBoxOnChange(event,index)}/> 
 			<TextField id="standard-basic" label="To Do" variant="standard" 
 			sx ={{width:'90%', paddingBottom:2, textDecoration:item.checked ? 'line-through':'undefined', input:{color: item.checked?'grey':'black'}}} 
-			defaultValue={item.content} onChange={(event)=>onChange(event,index)}/>
+			value={item.content} onChange={(event)=>textFieldOnChange(event,index)} onBlur={(event)=>textFieldOnBlur(event,index)}/>
 		</Box>
 	);
 };
