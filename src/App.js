@@ -33,16 +33,21 @@ export default function App() {
     }));
   }
 
-  const handleTextFieldBlur = (event, index) =>{
+  const handleTextFieldBlur = index =>{
     let item = toDoList[index];
-    if ( item.id<= 200){ // since the mock todo list has only 200 items
+    if ( item.id<= TODO_NUM){ 
       api.patch(`./${item.id}`,{id:item.id, completed:item.checked, title:item.content})
       .then(response=>console.log(response)).catch(error=>console.log(error));
     } else{
       api.post('./',{id:item.id, completed:item.checked, title:item.content})
       .then(response=>console.log(response)).catch(error=>console.log(error));
-    }
-    
+    }  
+  }
+
+  const handleButtonClick = index =>{
+    //console.log(index);
+    api.delete(`./${toDoList[index].id}`).then(response=>console.log(response))
+    setToDoList(toDoList.filter((item, i)=>i != index))
   }
 
   const randomInt = (min,max) => {
@@ -86,7 +91,7 @@ export default function App() {
         {
           toDoList.map((item, i) => <ToDoItem index={i} item={item}
           checkBoxOnChange={(event,index)=>handleCheckBoxChange(event,index)} textFieldOnChange={(event,index)=>handleTextFieldChange(event,index)}
-          textFieldOnBlur={(event,index)=>handleTextFieldBlur(event,index)}/>)
+          textFieldOnBlur={index=>handleTextFieldBlur(index)} buttonOnClick={index=>handleButtonClick(index)}/>)
         }
         <Button onClick={()=>{
           setToDoList([...toDoList,{id:maxID+1, checked:false, content:''}]);
